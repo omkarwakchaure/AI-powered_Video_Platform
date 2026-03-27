@@ -42,7 +42,7 @@ const UserMenu = ({ user, config }) => {
         {config.items.map(
           (item) =>
             item.enabled && (
-              <button key={item.key} onClick={item.onClick} className="w-full flex items-center gap-3 px-4 py-2 text-sm hover:bg-background transition-colors">
+              <button key={item.key} onClick={item.onClick} className="w-full flex items-center gap-3 px-4 py-2 text-sm hover:bg-background transition-colors cursor-pointer">
                 {item.icon &&
                   (() => {
                     const Icon = ICONS[item.icon];
@@ -57,7 +57,7 @@ const UserMenu = ({ user, config }) => {
       {/* Logout */}
       {config.logout.enabled && (
         <div className="border-t border-border py-1 sm:py-2">
-          <button onClick={config.logout.onClick} className="w-full flex items-center gap-3 px-4 py-2 text-sm text-alert hover:bg-alert/5">
+          <button onClick={config.logout.onClick} className="w-full flex items-center gap-3 px-4 py-2 text-sm text-alert hover:bg-alert/5 cursor-pointer">
             {config.logout.icon &&
               (() => {
                 const Icon = ICONS[config.logout.icon];

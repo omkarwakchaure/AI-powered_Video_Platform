@@ -7,6 +7,7 @@ import SidebarLayout from './partials/SidebarLayout';
 import { SIDEBAR_CONFIG } from '../config/sidebar';
 import { headerConfig, userMenuConfig } from '../config/header';
 import { closeMobileMenu, toggleMobileMenu, toggleSidebar } from '../../store/slices/sidebarSlice';
+import Logo from '../commonFiles/Logo';
 
 const MainLayout = () => {
   const { isSidebarCollapsed } = useSelector((state) => state.sidebar);
@@ -17,10 +18,13 @@ const MainLayout = () => {
   const { pathname } = useLocation();
 
   return (
-    <div className="min-h-screen bg-background flex flex-col">
+    <div className="h-screen bg-background flex flex-col overflow-hidden">
       {/* Side Panel */}
       <SidebarLayout
-        title="Title"
+        logo={{
+          full: <Logo size="md" />, // shown when expanded
+          icon: <Logo size="sm" variant="icon" />, // shown when collapsed
+        }}
         menuConfig={SIDEBAR_CONFIG}
         pathname={pathname}
         isSidebarCollapsed={isSidebarCollapsed}
@@ -32,9 +36,10 @@ const MainLayout = () => {
       />
 
       {/* Main Content */}
-      <div className={`flex flex-col flex-1 transition-all duration-300 ${isSidebarCollapsed ? 'md:ml-16' : 'md:ml-64'} ml-0`}>
+      <div className={`flex flex-col flex-1 min-h-0 transition-all duration-300 ${isSidebarCollapsed ? 'md:ml-16' : 'md:ml-64'} ml-0`}>
         <HeaderLayout
           user={{ name: 'Omkar Wakchaure', email: 'omkarwakchaure2019@gmail.com', role: { name: 'Admin' } }}
+          logo={<Logo size="sm" variant="icon" />}
           isAuthenticated={true}
           userMenuConfig={userMenuConfig}
           headerConfig={headerConfig}
@@ -44,7 +49,7 @@ const MainLayout = () => {
         </HeaderLayout>
 
         {/* Page Content */}
-        <main className="p-2 sm:p-4 flex-1 overflow-y-auto">
+        <main className="p-2 sm:p-4 flex-1 overflow-y-auto min-h-0">
           <div className="bg-plain rounded-md shadow-md p-6 max-w-full">
             <Outlet />
           </div>

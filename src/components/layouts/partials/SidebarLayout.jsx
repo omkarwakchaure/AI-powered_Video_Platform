@@ -1,8 +1,9 @@
 import { ArrowRightStartOnRectangleIcon, Bars3Icon, ChevronDownIcon, XMarkIcon } from '@heroicons/react/16/solid';
 import { useEffect, useState } from 'react';
 import React from 'react';
+import Logo from '../../commonFiles/Logo';
 
-const SidebarLayout = ({ title, menuConfig, pathname, isSidebarCollapsed, isMobileMenuOpen, onNavigate, onToggleSidebar, onCloseMobileMenu, onLogout }) => {
+const SidebarLayout = ({ logo, menuConfig, pathname, isSidebarCollapsed, isMobileMenuOpen, onNavigate, onToggleSidebar, onCloseMobileMenu, onLogout }) => {
   const [expanded, setExpanded] = useState({});
 
   // useEffect to set selected item to remain expanded even if the page gets refreshed.
@@ -28,16 +29,15 @@ const SidebarLayout = ({ title, menuConfig, pathname, isSidebarCollapsed, isMobi
         <div className={`h-16 flex items-center border-b border-border ${isSidebarCollapsed && !isMobileMenuOpen ? 'px-2 justify-center' : 'px-4'}`}>
           {/* LEFT GROUP: Menu + Title */}
           <div className={`flex items-center ${isSidebarCollapsed && !isMobileMenuOpen ? 'justify-center w-full' : 'gap-6'}`}>
-            {/* Desktop: Toggle button */}
             <button onClick={onToggleSidebar} className="p-2 rounded-lg hover:bg-background transition-colors hidden md:block cursor-pointer">
-              <Bars3Icon className="w-6 h-6 text-text" />
+              {isSidebarCollapsed && !isMobileMenuOpen ? (logo?.icon ?? <Logo size="sm" variant="icon" />) : <Bars3Icon className="w-6 h-6 text-text" />}
             </button>
 
-            {/* Desktop title */}
-            {!isSidebarCollapsed && <h1 className="text-lg font-bold text-text hidden md:block -ml-1">{title}</h1>}
+            {/* Desktop logo */}
+            {!isSidebarCollapsed && <div className="hidden md:block">{logo?.full ?? <Logo size="md" />}</div>}
 
-            {/* Mobile title */}
-            <h1 className="text-xl font-bold text-text md:hidden truncate ml-1">{title}</h1>
+            {/* Mobile logo */}
+            <div className="md:hidden">{logo?.full ?? <Logo size="md" />}</div>
           </div>
 
           {/* RIGHT: Mobile close button */}

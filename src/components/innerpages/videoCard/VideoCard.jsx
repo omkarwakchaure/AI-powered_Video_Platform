@@ -20,7 +20,7 @@ const VideoCard = ({ info }) => {
         />
 
         {/* Duration */}
-        <span className="absolute bottom-2 right-2 text-xs bg-black/80 text-white px-1.5 py-0.5 rounded">
+        <span className="absolute bottom-2 right-2 text-xs bg-black/80 text-plain px-1.5 py-0.5 rounded">
           {contentDetails?.duration?.replace("PT", "").toLowerCase()}
         </span>
 
@@ -36,8 +36,8 @@ const VideoCard = ({ info }) => {
           <li className="font-semibold text-sm line-clamp-2" title={title}>
             {title}
           </li>
-          <li className="text-xs text-gray-600 mt-1">{channelTitle}</li>
-          <li className="text-xs text-gray-500">
+          <li className="text-xs text-text/80 mt-1">{channelTitle}</li>
+          <li className="text-xs text-text/60">
             {views} views • {formatDistanceToNow(new Date(publishedAt))} ago
           </li>
         </ul>

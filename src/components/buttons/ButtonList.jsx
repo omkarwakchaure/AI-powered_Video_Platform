@@ -41,7 +41,7 @@ const ButtonList = () => {
     <div className="relative flex items-center w-full overflow-hidden py-3">
       {/* Left arrow */}
       {showLeft && (
-        <button onClick={() => scroll('left')} className="absolute left-2 z-10 bg-white shadow-md rounded-full p-2 hover:bg-gray-100 cursor-pointer">
+        <button onClick={() => scroll('left')} className="absolute left-2 z-10 bg-plain shadow-md rounded-full p-2 hover:bg-background cursor-pointer">
           <ChevronLeftIcon className="h-6 w-6" />
         </button>
       )}
@@ -57,7 +57,7 @@ const ButtonList = () => {
 
       {/* Right arrow */}
       {showRight && (
-        <button onClick={() => scroll('right')} className="absolute right-2 z-10 bg-white shadow-md rounded-full p-2 hover:bg-gray-100 cursor-pointer">
+        <button onClick={() => scroll('right')} className="absolute right-2 z-10 bg-plain shadow-md rounded-full p-2 hover:bg-background cursor-pointer">
           <ChevronRightIcon className="h-6 w-6" />
         </button>
       )}
