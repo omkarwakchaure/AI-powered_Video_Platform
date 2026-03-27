@@ -21,11 +21,12 @@ export const userMenuConfig = {
     showRole: true,
   },
   items: [
-    { key: 'profile', label: 'Profile', enabled: true },
-    { key: 'settings', label: 'Settings', enabled: true },
+    { key: 'profile', label: 'Profile', enabled: true, icon: 'UserIcon' },
+    { key: 'settings', label: 'Settings', enabled: true, icon: 'Cog6ToothIcon' },
   ],
   logout: {
     enabled: true,
     label: 'Logout',
+    icon: 'ArrowRightStartOnRectangleIcon',
   },
 };

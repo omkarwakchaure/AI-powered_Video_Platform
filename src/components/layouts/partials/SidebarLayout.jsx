@@ -1,47 +1,22 @@
-import {
-  ArrowRightStartOnRectangleIcon,
-  Bars3Icon,
-  BuildingOfficeIcon,
-  ChevronDownIcon,
-  ClockIcon,
-  HomeIcon,
-  ListBulletIcon,
-  MapPinIcon,
-  PlusIcon,
-  ShieldCheckIcon,
-  Squares2X2Icon,
-  UserGroupIcon,
-  UserPlusIcon,
-  XMarkIcon,
-} from '@heroicons/react/24/outline';
-import {  useState } from 'react';
+import { ArrowRightStartOnRectangleIcon, Bars3Icon, ChevronDownIcon, XMarkIcon } from '@heroicons/react/16/solid';
+import { useEffect, useState } from 'react';
 import React from 'react';
 
-const ICON_MAP = {
-  HomeIcon,
-  BuildingOfficeIcon,
-  UserGroupIcon,
-  PlusIcon,
-  ListBulletIcon,
-  MapPinIcon,
-  Squares2X2Icon,
-  ShieldCheckIcon,
-  UserPlusIcon,
-  ClockIcon,
-};
+const SidebarLayout = ({ title, menuConfig, pathname, isSidebarCollapsed, isMobileMenuOpen, onNavigate, onToggleSidebar, onCloseMobileMenu, onLogout }) => {
+  const [expanded, setExpanded] = useState({});
 
-const SidebarLayout = ({
-  menuConfig,
-  pathname,
-  isSidebarCollapsed,
-  isMobileMenuOpen,
-  onNavigate,
-  onToggleSidebar,
-  onCloseMobileMenu,
-  onLogout,
-}) => {
+  // useEffect to set selected item to remain expanded even if the page gets refreshed.
+  useEffect(() => {
+    menuConfig.forEach((item) => {
+      if (item.children?.some((child) => pathname.startsWith(child.path))) {
+        setExpanded((prev) => ({ ...prev, [item.id]: true }));
+      }
+    });
+  }, [pathname, menuConfig]);
 
-  const [expanded, setExpanded] = useState>({});
+  const toggle = (id) => {
+    setExpanded((prev) => ({ ...prev, [id]: !prev[id] }));
+  };
 
   return (
     <>
@@ -50,34 +25,37 @@ const SidebarLayout = ({
           isMobileMenuOpen ? 'flex w-full md:hidden' : 'hidden'
         } ${!isMobileMenuOpen && isSidebarCollapsed ? 'md:flex md:w-16' : ''} ${!isMobileMenuOpen && !isSidebarCollapsed ? 'md:flex md:w-64' : ''}`}
       >
-        {/* Header */}
-        <div className="flex items-center justify-end p-3.5 border-b border-border">
-          {/* {!isSidebarCollapsed && <h1 className="text-xl font-bold text-text hidden md:block">AssetNova</h1>} */}
+        <div className={`h-16 flex items-center border-b border-border ${isSidebarCollapsed && !isMobileMenuOpen ? 'px-2 justify-center' : 'px-4'}`}>
+          {/* LEFT GROUP: Menu + Title */}
+          <div className={`flex items-center ${isSidebarCollapsed && !isMobileMenuOpen ? 'justify-center w-full' : 'gap-6'}`}>
+            {/* Desktop: Toggle button */}
+            <button onClick={onToggleSidebar} className="p-2 rounded-lg hover:bg-background transition-colors hidden md:block cursor-pointer">
+              <Bars3Icon className="w-6 h-6 text-text" />
+            </button>
 
-          {/* Mobile: Always show title */}
-          {/* <h1 className="text-xl font-bold text-text md:hidden">AssetNova</h1> */}
+            {/* Desktop title */}
+            {!isSidebarCollapsed && <h1 className="text-lg font-bold text-text hidden md:block -ml-1">{title}</h1>}
 
-          {/* Desktop: Toggle button */}
-          <button onClick={onToggleSidebar} className="p-2 rounded-lg hover:bg-background transition-colors hidden md:block cursor-pointer">
-            <Bars3Icon className="w-5 h-5 text-text" />
-          </button>
+            {/* Mobile title */}
+            <h1 className="text-xl font-bold text-text md:hidden truncate ml-1">{title}</h1>
+          </div>
 
-          {/* Mobile: Close button */}
-          <button onClick={onCloseMobileMenu}
-            className="p-2 rounded-lg hover:bg-background transition-colors cursor-pointer md:hidden"
-            aria-label="Close Menu"
-          >
-            <XMarkIcon className="w-6 h-6 text-text" />
-          </button>
+          {/* RIGHT: Mobile close button */}
+          <div className="ml-auto md:hidden">
+            <button onClick={onCloseMobileMenu} className="p-2 rounded-lg hover:bg-background transition-colors cursor-pointer" aria-label="Close Menu">
+              <XMarkIcon className="w-6 h-6 text-text" />
+            </button>
+          </div>
         </div>
 
         {/* Navigation */}
         <nav className="flex-1 overflow-y-auto p-4">
           <div className="space-y-2">
             {menuConfig.map((item) => {
-              const Icon = ICON_MAP[item.icon];
+              const Icon = item.icon;
               const isOpen = expanded[item.id];
               const isActiveItem = item.path && pathname === item.path;
+              const isSelectionActive = item.children?.some((child) => pathname.startsWith(child.path));
 
               if (!item.children) {
                 return (
@@ -85,7 +63,7 @@ const SidebarLayout = ({
                     key={item.id}
                     onClick={() => {
                       if (item.path) {
-                       onNavigate(item.path);
+                        onNavigate(item.path);
                         onCloseMobileMenu();
                       }
 
@@ -95,7 +73,7 @@ const SidebarLayout = ({
                       isSidebarCollapsed ? 'justify-center' : 'space-x-3'
                     } ${isActiveItem ? 'text-primary font-medium' : 'hover:bg-background text-text/90 font-medium'}`}
                   >
-                    <Icon className="w-5 h-5 flex-shrink-0" />
+                    {Icon && <Icon className="w-5 h-5 flex-shrink-0" />}
                     {(!isSidebarCollapsed || isMobileMenuOpen) && <span>{item.label}</span>}
                   </button>
                 );
@@ -104,10 +82,10 @@ const SidebarLayout = ({
               return (
                 <div key={item.id}>
                   <button
-                    onClick={() => setExpanded((prev) => ({ ...prev, [item.id]: !prev[item.id] }))}
+                    onClick={() => toggle(item.id)}
                     className={`w-full flex items-center p-3 rounded-lg transition-colors group cursor-pointer ${
                       isSidebarCollapsed ? 'justify-center' : 'justify-between'
-                    } hover:bg-background`}
+                    }  ${isSelectionActive ? 'text-primary' : 'hover:bg-background'}`}
                   >
                     <div className={`flex items-center ${isSidebarCollapsed ? '' : 'space-x-3'}`}>
                       <Icon className="w-5 h-5 flex-shrink-0" />
@@ -120,7 +98,7 @@ const SidebarLayout = ({
                   {isOpen && (!isSidebarCollapsed || isMobileMenuOpen) && (
                     <div className="ml-8 mt-2 space-y-1">
                       {item.children.map((child) => {
-                        const ChildIcon = child.icon ? ICON_MAP[child.icon] : null;
+                        const ChildIcon = child.icon;
 
                         return (
                           <button
@@ -133,7 +111,7 @@ const SidebarLayout = ({
                               pathname === child.path ? 'bg-background/70 text-primary' : 'hover:bg-background'
                             }`}
                           >
-                            {ChildIcon && <ChildIcon className="w-4 h-4 text-text/60" />}
+                            {ChildIcon && <ChildIcon className="w-4 h-4 text-text/60 flex-shrink-0" />}
                             <span>{child.label}</span>
                           </button>
                         );
@@ -153,7 +131,7 @@ const SidebarLayout = ({
             className={`w-full flex items-center p-3 rounded-lg hover:bg-alert/5 hover:text-alert transition-colors relative group cursor-pointer ${
               isSidebarCollapsed ? 'justify-center' : 'space-x-3'
             }`}
-            onClick={onLogout}  
+            onClick={onLogout}
           >
             <ArrowRightStartOnRectangleIcon className="text-text/80 group-hover:text-alert w-6 h-6 flex-shrink-0" />
             {(!isSidebarCollapsed || isMobileMenuOpen) && <span className="text-text/90 group-hover:text-alert font-medium">Logout</span>}

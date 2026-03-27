@@ -3,58 +3,52 @@ import { useEffect, useRef, useState } from 'react';
 import UserMenu from './UserMenu';
 import React from 'react';
 
-const HeaderLayout = ({ user, userMenuConfig, headerConfig, isAuthenticated = true, onToggleMenu , children}) => {
+const HeaderLayout = ({ user, userMenuConfig, headerConfig, isAuthenticated = true, onToggleMobileMenu, children }) => {
   const [showNotifications, setShowNotifications] = useState(false);
   const [showUserPopup, setShowUserPopup] = useState(false);
 
-  const notificationRef = useRef<HTMLDivElement | null>(null);
-  const userRef = useRef<HTMLDivElement | null>(null);
+  const notificationRef = useRef(null);
+  const userRef = useRef(null);
 
   useEffect(() => {
     const handleClickOutside = (event) => {
-      if (!userRef.current) return;
-
-      if (!userRef.current.contains(event.target)) {
+      if (notificationRef.current && !notificationRef.current.contains(event.target)) {
+        setShowNotifications(false);
+      }
+      if (userRef.current && !userRef.current.contains(event.target)) {
         setShowUserPopup(false);
       }
     };
-
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
   return (
-    <header className="w-full min-h-16 bg-plain shadow flex items-center px-4 sm:px-6 py-2">
-      {/* LEFT */}
-      <div className="flex items-center">
-        {headerConfig.brand.showMenuButton && (
-          <div className="md:hidden">
-            <button onClick={onToggleMenu} className="p-2 rounded-lg hover:bg-background transition-colors cursor-pointer" aria-label="Toggle menu">
-              <Bars3Icon className="w-6 h-6 text-text" />
-            </button>
-          </div>
-        )}
+    <header className="w-full min-h-16 bg-plain shadow flex items-center px-3 sm:px-4 md:px-6 py-2 gap-2">
+      {/* LEFT — hamburger */}
+      {headerConfig.brand.showMenuButton && (
+        <div className="md:hidden shrink-0">
+          <button onClick={onToggleMobileMenu} className="p-2 rounded-lg hover:bg-background transition-colors cursor-pointer" aria-label="Toggle menu">
+            <Bars3Icon className="w-5 h-5 text-text" />
+          </button>
+        </div>
+      )}
 
-        <h1 className="ml-3 text-lg font-bold text-text">{headerConfig.brand.title}</h1>
-      </div>
+      {/* CENTER — search bar fills remaining space */}
+      <div className="flex-1 min-w-0">{children}</div>
 
-      {/* PUSH RIGHT */}
-      <div className='flex-1 flex justify-center'>
-        {children}
-      </div>
-
-      {/* RIGHT */}
-      <div className="flex items-center gap-2 sm:gap-4 md:gap-6">
+      {/* RIGHT — icon actions */}
+      <div className="flex items-center gap-1 sm:gap-2 shrink-0">
         {/* Notifications */}
         {headerConfig.notifications.enabled && (
           <div ref={notificationRef} className="relative">
             <button
-              onClick={() => setShowNotifications(!showNotifications)}
+              onClick={() => setShowNotifications((prev) => !prev)}
               className="text-text p-2 rounded-md hover:bg-background transition-colors relative"
               aria-label="Notifications"
             >
-              <BellIcon className="w-5 h-5 sm:w-6 sm:h-6" />
-              {headerConfig.notifications.showIndicator && <span className="absolute -top-1 -right-1 w-2 h-2 bg-alert rounded-full" />}
+              <BellIcon className="w-5 h-5" />
+              {headerConfig.notifications.showIndicator && <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-alert rounded-full" />}
             </button>
 
             {showNotifications && (
@@ -80,7 +74,7 @@ const HeaderLayout = ({ user, userMenuConfig, headerConfig, isAuthenticated = tr
             className="text-text p-2 rounded-md hover:bg-background transition-colors"
             aria-label="User profile"
           >
-            <UserCircleIcon className="w-5 h-5 sm:w-6 sm:h-6" />
+            <UserCircleIcon className="w-5 h-5" />
           </button>
 
           {isAuthenticated && user && showUserPopup && <UserMenu user={user} config={userMenuConfig} />}

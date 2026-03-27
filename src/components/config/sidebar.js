@@ -1,61 +1,64 @@
+import { FolderIcon, HomeIcon, BoltIcon, ClockIcon, MusicalNoteIcon, PuzzlePieceIcon, TrophyIcon, FilmIcon, SignalIcon } from '@heroicons/react/24/outline';
+
 export const SIDEBAR_CONFIG = [
   {
     id: 'home',
     label: 'Home',
-    icon: 'HomeIcon',
+    icon: HomeIcon, // pass component directly
     path: '/',
   },
   {
     id: 'shorts',
     label: 'Shorts',
-    icon: 'BoltIcon',
+    icon: BoltIcon,
     path: '/shorts',
   },
   {
     id: 'library',
-    section: 'You',
+    label: 'Library',
+    icon: FolderIcon,
     children: [
       {
         id: 'watch-later',
         label: 'Watch Later',
-        icon: 'ClockIcon',
+        icon: ClockIcon,
         path: '/watch-later',
       },
     ],
   },
-
   {
     id: 'explore',
-    section: 'Explore',
+    label: 'Explore',
+    icon: FolderIcon,
     children: [
       {
         id: 'music',
         label: 'Music',
-        icon: 'MusicalNoteIcon',
+        icon: MusicalNoteIcon,
         path: '/category/music',
       },
       {
         id: 'gaming',
         label: 'Gaming',
-        icon: 'PuzzlePieceIcon',
+        icon: PuzzlePieceIcon,
         path: '/category/gaming',
       },
       {
         id: 'sports',
         label: 'Sports',
-        icon: 'TrophyIcon',
+        icon: TrophyIcon,
         path: '/category/sports',
       },
       {
         id: 'movies',
         label: 'Movies',
-        icon: 'FilmIcon',
+        icon: FilmIcon,
         path: '/category/movies',
       },
       {
         id: 'live',
         label: 'Live',
-        icon: 'SignalIcon',
+        icon: SignalIcon,
         path: '/category/live',
       },
     ],
