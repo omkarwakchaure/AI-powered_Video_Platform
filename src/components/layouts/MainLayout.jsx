@@ -49,8 +49,8 @@ const MainLayout = () => {
         </HeaderLayout>
 
         {/* Page Content */}
-        <main className="p-2 sm:p-4 flex-1 overflow-y-auto min-h-0">
-          <div className="bg-plain rounded-md shadow-md p-6 max-w-full">
+        <main className="p-2 sm:p-4 flex-1 overflow-hidden min-h-0">
+          <div className="bg-plain rounded-md shadow-md p-6 max-w-full h-full flex flex-col">
             <Outlet />
           </div>
         </main>

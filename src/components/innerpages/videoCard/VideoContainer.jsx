@@ -5,7 +5,7 @@ import { Link } from 'react-router';
 import { YOUTUBE_VIDEOS_API } from '../../../utils/constants';
 import VideoCard from './VideoCard';
 
-const VideoContainer = () => {
+const VideoContainer = ({ scrollRef }) => {
   const [videos, setVideos] = useState([]);
   const [nextPageToken, setNextPageToken] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -15,12 +15,23 @@ const VideoContainer = () => {
     if (loading) return;
     setLoading(true);
 
-    const url = nextPageToken != null ? `${YOUTUBE_VIDEOS_API}&pageToken=${nextPageToken}` : YOUTUBE_VIDEOS_API;
+    const separator = YOUTUBE_VIDEOS_API.includes('?') ? '&' : '?';
+
+    const url = nextPageToken != null ? `${YOUTUBE_VIDEOS_API}${separator}pageToken=${nextPageToken}` : YOUTUBE_VIDEOS_API;
 
     const data = await fetch(url);
     const res = await data.json();
 
-    setVideos((prev) => [...prev, ...res.items]);
+    // setVideos((prev) => [...prev, ...res.items]);
+    setVideos((prev) => {
+      const videoMap = new Map();
+
+      [...prev, ...res.items].forEach((video) => {
+        videoMap.set(video.id, video);
+      });
+
+      return Array.from(videoMap.values());
+    });
     setNextPageToken(res.nextPageToken || null);
     setLoading(false);
   }, [nextPageToken, loading]);
@@ -29,8 +40,9 @@ const VideoContainer = () => {
     getVideos();
   }, []);
 
+  // Infinite scroll handler
   useEffect(() => {
-    const scrollContainer = containerRef.current?.closest('main');
+    const scrollContainer = scrollRef.current;
     if (!scrollContainer) return;
 
     const handleScroll = () => {
@@ -42,10 +54,19 @@ const VideoContainer = () => {
 
     scrollContainer.addEventListener('scroll', handleScroll);
     return () => scrollContainer.removeEventListener('scroll', handleScroll);
-  }, [getVideos, loading]);
+  }, [getVideos, loading, scrollRef]);
 
   return (
-    <div ref={containerRef} className="flex flex-wrap ml-12">
+    <div
+      ref={containerRef}
+      className=" grid
+      grid-cols-1
+      sm:grid-cols-2
+      lg:grid-cols-3
+      xl:grid-cols-4
+      gap-6
+      px-2 sm:px-4"
+    >
       {videos.map((video) => (
         <Link key={video.id} to={'/watch?v=' + video.id}>
           <VideoCard info={video} />

@@ -1,15 +1,29 @@
 import ButtonList from './buttons/ButtonList';
 import VideoContainer from './innerpages/videoCard/VideoContainer';
 import React from 'react';
+import { useRef } from 'react';
 
 const MainContainer = () => {
+  const scrollRef = useRef(null);
+
   return (
-    <div className="flex flex-col w-full min-h-0 flex-1">
-      <div className="sticky top-0 z-10 bg-plain border-b border-border shadow-sm rounded">
-        <ButtonList />
+    <div className="flex flex-col h-full overflow-hidden">
+      {/* Top Buttons */}
+      <div className="sticky top-0 z-10 bg-plain">
+        <div className="p-2">
+          <ButtonList />
+        </div>
+
+        {/* Divider */}
+        <div className="border-b border-border" />
       </div>
-      <VideoContainer />
+
+      {/* ONLY videos scroll */}
+      <div ref={scrollRef} className="flex-1 overflow-y-auto h-full flex flex-col mt-4">
+        <VideoContainer scrollRef={scrollRef} />
+      </div>
     </div>
   );
 };
+
 export default MainContainer;

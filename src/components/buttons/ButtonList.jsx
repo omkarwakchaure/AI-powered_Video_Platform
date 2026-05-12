@@ -47,7 +47,7 @@ const ButtonList = () => {
       )}
 
       {/* Buttons container */}
-      <div className="overflow-hidden w-full px-14">
+      <div className="overflow-hidden w-full px-4">
         <div ref={scrollRef} className="flex flex-nowrap gap-3 overflow-x-auto scroll-smooth scrollbar-hide" onScroll={updateVisibility}>
           {list.map((item) => (
             <Button key={item} buttonName={item} />

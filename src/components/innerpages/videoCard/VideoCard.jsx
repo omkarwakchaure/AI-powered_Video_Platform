@@ -10,7 +10,7 @@ const VideoCard = ({ info }) => {
   );
 
   return (
-    <div className="p-2 w-86 cursor-pointer">
+    <div className="w-full cursor-pointer">
       {/* Thumbnail */}
       <div className="relative">
         <img
@@ -33,7 +33,7 @@ const VideoCard = ({ info }) => {
       {/* Bottom info */}
       <div className="mt-3">
         <ul>
-          <li className="font-semibold text-sm line-clamp-2" title={title}>
+          <li className="font-semibold text-sm line-clamp-2 text-text/90" title={title}>
             {title}
           </li>
           <li className="text-xs text-text/80 mt-1">{channelTitle}</li>

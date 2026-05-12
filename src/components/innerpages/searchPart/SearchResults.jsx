@@ -1,13 +1,13 @@
-import React, { useEffect, useState } from "react";
-import { useLocation } from "react-router";
-import { YOUTUBE_SEARCH_API } from "../../../utils/constants";
-import SearchVideoCard from "./SearchVideoCard";
+import React, { useEffect, useState } from 'react';
+import { useLocation } from 'react-router';
+import { YOUTUBE_SEARCH_API } from '../../../utils/constants';
+import SearchVideoCard from './SearchVideoCard';
 
 const SearchResults = () => {
   const [results, setResults] = useState([]);
 
   const { search } = useLocation();
-  const query = new URLSearchParams(search).get("q");
+  const query = new URLSearchParams(search).get('q');
 
   useEffect(() => {
     if (!query) return;
@@ -17,7 +17,7 @@ const SearchResults = () => {
       const data = await res.json();
 
       const videosWithId = data
-        .filter((item) => item.id.kind === "youtube#video")
+        .filter((item) => item.id.kind === 'youtube#video')
         .map((item) => ({
           ...item,
           id: item.id.videoId, // normalize id
@@ -27,11 +27,14 @@ const SearchResults = () => {
     };
     fetchResults();
   }, [query]);
+
   return (
-    <div className="flex flex-col mt-4 w-full">
-      {results.map((video) => (
-        <SearchVideoCard key={video.id} video={video} />
-      ))}
+    <div className="h-full overflow-y-auto">
+      <div className="flex flex-col gap-4 mt-4 w-full max-w-6xl mx-auto px-2 sm:px-4">
+        {results.map((video) => (
+          <SearchVideoCard key={video.id} video={video} />
+        ))}
+      </div>
     </div>
   );
 };
