@@ -1,13 +1,11 @@
-import React, { useEffect } from "react";
-import { useDispatch } from "react-redux";
-import { useSearchParams } from "react-router";
-import CommentsContainer from "../comment/CommentsContainer";
-import LiveChat from "./chatPage/LiveChat";
-import { toggleSidebar } from "../../../store/slices/sidebarSlice";
+import React, { useEffect } from 'react';
+import { useDispatch } from 'react-redux';
+import { useSearchParams } from 'react-router';
+import CommentsContainer from '../comment/CommentsContainer';
+import { toggleSidebar } from '../../../store/slices/sidebarSlice';
 
 const WatchPage = () => {
   const [searchParams] = useSearchParams();
-
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -15,25 +13,21 @@ const WatchPage = () => {
   }, [dispatch]);
 
   return (
-    <div className="flex flex-col w-full">
-      <div className="flex px-5 w-full">
-        <div className="w-full">
+    <div className="h-full overflow-y-auto px-2 sm:px-4 lg:px-6 py-4">
+      {/* Video */}
+      <div className="w-full max-w-[1300px] mx-auto">
+        <div className="relative w-full aspect-video rounded-xl overflow-hidden shadow-md">
           <iframe
-            width="1200"
-            height="600"
-            src={"https://www.youtube.com/embed/" + searchParams.get("v")}
+            className="absolute top-0 left-0 w-full h-full"
+            src={'https://www.youtube.com/embed/' + searchParams.get('v')}
             title="YouTube video player"
             frameBorder="0"
-            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-            referrerPolicy="strict-origin-when-cross-origin"
             allowFullScreen
-          ></iframe>
-        </div>
-        <div className="w-full">
-          <LiveChat />
+          />
         </div>
       </div>
 
+      {/* Comments */}
       <CommentsContainer />
     </div>
   );

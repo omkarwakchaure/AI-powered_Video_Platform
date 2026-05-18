@@ -1,15 +1,18 @@
-import React from "react";
-import CommentCard from "./CommentCard";
+import React from 'react';
+import CommentCard from './CommentCard';
 
 const CommentList = ({ comments }) => {
   return (
     <div>
       {comments.map((comment) => (
         <div key={comment.id}>
-          <CommentCard key={comment.id} data={comment} />
-          <div className="pl-5 ml-5">
-            <CommentList key={comment.id} comments={comment.replies} />
-          </div>
+          <CommentCard data={comment} />
+
+          {comment.replies.length > 0 && (
+            <div className="pl-3 sm:pl-6 ml-2 sm:ml-4 border-l border-border">
+              <CommentList comments={comment.replies} />
+            </div>
+          )}
         </div>
       ))}
     </div>

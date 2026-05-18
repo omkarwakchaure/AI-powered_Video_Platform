@@ -1,18 +1,16 @@
-import React from "react";
+import React from 'react';
 
 const CommentCard = ({ data }) => {
-  const { name, text } = data;
+  const { name, text, avatar } = data;
 
   return (
-    <div className="flex shadow-sm bg-gray-100 p-2 rounded-lg my-2">
-      <img
-        className="w-8 h-8"
-        alt="user"
-        src="https://img.freepik.com/premium-vector/user-icon-vector_1272330-86.jpg"
-      />
-      <div className="px-3">
-        <p className="font-bold">{name}</p>
-        <p>{text}</p>
+    <div className="flex gap-3 bg-background p-3 rounded-xl my-3">
+      <img className="w-8 h-8 sm:w-10 sm:h-10 rounded-full shrink-0" alt="user" src={avatar} />
+
+      <div className="min-w-0 flex-1">
+        <p className="font-semibold text-sm sm:text-base break-words">{name}</p>
+
+        <p className="text-sm text-text/80 break-words" dangerouslySetInnerHTML={{ __html: text }} />
       </div>
     </div>
   );

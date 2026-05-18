@@ -6,6 +6,7 @@ import "dotenv/config";
 import videosHandler from "./api/videos.js";
 import searchHandler from "./api/search.js";
 import suggestHandler from "./api/suggest.js";
+import commentsHandler from "./api/comments.js";
 
 const app = express();
 
@@ -19,6 +20,7 @@ app.use(express.static(path.join(__dirname, "dist")));
 app.get("/api/videos", (req, res) => videosHandler(req, res));
 app.get("/api/search", (req, res) => searchHandler(req, res));
 app.get("/api/suggest", (req, res) => suggestHandler(req, res));
+app.get("/api/comments", (req, res) => commentsHandler(req, res));
 
 // Run server
 const PORT = 5001;

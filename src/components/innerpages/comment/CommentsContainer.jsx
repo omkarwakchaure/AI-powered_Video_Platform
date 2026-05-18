@@ -1,73 +1,47 @@
-import React from "react";
-import CommentList from "./CommentList";
+import React, { useEffect, useState } from 'react';
+import { useSearchParams } from 'react-router';
+import CommentList from './CommentList';
+import { YOUTUBE_COMMENTS_API } from '../../../utils/constants';
 
 const CommentsContainer = () => {
-  const commentsData = [
-    {
-      id: 1,
-      name: "User 1",
-      text: "Comment 1",
-      replies: [
-        {
-          id: 2,
-          name: "User 2",
-          text: "Reply 1",
-          replies: [
-            {
-              id: 3,
-              name: "User 3",
-              text: "Reply to Reply 1",
-              replies: [
-                {
-                  id: 4,
-                  name: "User 4",
-                  text: "Deepest Level Reply",
-                  replies: [],
-                },
-              ],
-            },
-          ],
-        },
-        {
-          id: 5,
-          name: "User 5",
-          text: "Another Reply to Comment 1",
-          replies: [],
-        },
-      ],
-    },
-    {
-      id: 6,
-      name: "User 6",
-      text: "Comment 2",
-      replies: [
-        {
-          id: 7,
-          name: "User 7",
-          text: "Reply to Comment 2",
-          replies: [
-            {
-              id: 8,
-              name: "User 8",
-              text: "Reply to Reply to Comment 2",
-              replies: [],
-            },
-          ],
-        },
-        {
-          id: 9,
-          name: "User 9",
-          text: "Another Reply to Comment 2",
-          replies: [],
-        },
-      ],
-    },
-  ];
+  const [commentsData, setCommentsData] = useState([]);
+  const [searchParams] = useSearchParams();
+
+  const videoId = searchParams.get('v');
+
+  useEffect(() => {
+    if (!videoId) return;
+
+    const fetchComments = async () => {
+      const res = await fetch(`${YOUTUBE_COMMENTS_API}?videoId=${videoId}`);
+      const data = await res.json();
+
+      const formattedComments = data.map((item) => ({
+        id: item.id,
+        name: item.snippet.topLevelComment.snippet.authorDisplayName,
+        text: item.snippet.topLevelComment.snippet.textDisplay,
+        avatar: item.snippet.topLevelComment.snippet.authorProfileImageUrl,
+        replies:
+          item.replies?.comments?.map((reply) => ({
+            id: reply.id,
+            name: reply.snippet.authorDisplayName,
+            text: reply.snippet.textDisplay,
+            avatar: reply.snippet.authorProfileImageUrl,
+            replies: [],
+          })) || [],
+      }));
+
+      setCommentsData(formattedComments);
+    };
+
+    fetchComments();
+  }, [videoId]);
 
   return (
-    <div className="m-5 p-2">
-      <h1 className="text-2xl font-bold">Comments:</h1>
-      <CommentList comments={commentsData} />
+    <div className="mt-6 max-w-5xl mx-auto px-2 sm:px-4 pb-10">
+      <h1 className="text-lg sm:text-2xl font-bold mb-4 text-text">Comments</h1>
+
+      {commentsData.length === 0 ? <p className="text-sm text-text/60">No comments available</p> : <CommentList comments={commentsData} />}
     </div>
   );
 };
