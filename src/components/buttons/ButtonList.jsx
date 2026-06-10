@@ -1,12 +1,15 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/react/16/solid';
 import Button from './Button';
-import { list } from '../config/button';
+import { categoryMap } from '../config/button';
+import { useNavigate } from 'react-router';
 
 const ButtonList = () => {
   const scrollRef = useRef(null);
   const [showLeft, setShowLeft] = useState(false);
   const [showRight, setShowRight] = useState(true);
+
+  const navigate = useNavigate();
 
   const updateVisibility = () => {
     const container = scrollRef.current;
@@ -49,8 +52,8 @@ const ButtonList = () => {
       {/* Buttons container */}
       <div className="overflow-hidden w-full px-4">
         <div ref={scrollRef} className="flex flex-nowrap gap-3 overflow-x-auto scroll-smooth scrollbar-hide" onScroll={updateVisibility}>
-          {list.map((item) => (
-            <Button key={item} buttonName={item} />
+          {Object.keys(categoryMap).map((item) => (
+            <Button key={item} buttonName={item} onClick={() => navigate(`/search?q=${encodeURIComponent(categoryMap[item])}`)} />
           ))}
         </div>
       </div>

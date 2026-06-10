@@ -2,6 +2,7 @@ import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { useLocation } from 'react-router';
 import { YOUTUBE_SEARCH_API } from '../../../utils/constants';
 import SearchVideoCard from './SearchVideoCard';
+import ButtonList from '../../buttons/ButtonList';
 
 const SearchResults = () => {
   const [results, setResults] = useState([]);
@@ -46,6 +47,8 @@ const SearchResults = () => {
     setLoading(false);
   }, [query, nextPageToken, loading]);
 
+  const isLive = query === 'live';
+
   // reset when query changes
   useEffect(() => {
     setResults([]);
@@ -78,9 +81,13 @@ const SearchResults = () => {
 
   return (
     <div ref={containerRef} className="h-full overflow-y-auto">
+      <div className="sticky top-0 z-10 bg-plain">
+        <ButtonList />
+      </div>
+
       <div className="flex flex-col gap-4 mt-4 w-full max-w-6xl mx-auto px-2 sm:px-4">
         {results.map((video) => (
-          <SearchVideoCard key={video.id} video={video} />
+          <SearchVideoCard key={video.id} video={video} isLive={video.snippet.liveBroadcastContent === 'live'} />
         ))}
 
         {loading && <p className="text-center py-4 text-text/60">Loading...</p>}

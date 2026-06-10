@@ -2,7 +2,7 @@ import React from 'react';
 import { Link } from 'react-router';
 import formatDistanceToNow from 'date-fns/formatDistanceToNow';
 
-const SearchVideoCard = ({ video }) => {
+const SearchVideoCard = ({ video, isLive }) => {
   const { snippet, id } = video;
 
   return (
@@ -19,17 +19,10 @@ const SearchVideoCard = ({ video }) => {
       "
     >
       {/* Thumbnail */}
-      <div className="w-full md:w-[420px] flex-shrink-0">
-        <img
-          src={snippet.thumbnails.high.url}
-          alt={snippet.title}
-          className="
-            w-full
-            aspect-video
-            object-cover
-            rounded-xl
-          "
-        />
+      <div className="relative w-full md:w-[420px] flex-shrink-0">
+        <img src={snippet.thumbnails.high.url} alt={snippet.title} className="w-full aspect-video object-cover rounded-xl" />
+
+        {isLive && <span className="absolute top-2 left-2 bg-red-600 text-white text-xs px-2 py-1 rounded">LIVE</span>}
       </div>
 
       {/* Right Side */}
