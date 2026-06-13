@@ -17,6 +17,8 @@ const MainLayout = () => {
   const dispatch = useDispatch();
   const { pathname } = useLocation();
 
+  const isShortsPage = pathname === '/shorts';
+
   return (
     <div className="h-screen bg-background flex flex-col overflow-hidden">
       {/* Side Panel */}
@@ -49,8 +51,8 @@ const MainLayout = () => {
         </HeaderLayout>
 
         {/* Page Content */}
-        <main className="p-2 sm:p-4 flex-1 overflow-hidden min-h-0">
-          <div className="bg-plain rounded-md shadow-md p-6 max-w-full h-full flex flex-col">
+        <main className={`flex-1 overflow-hidden min-h-0 ${isShortsPage ? '' : 'p-2 sm:p-4'}`}>
+          <div className={isShortsPage ? 'h-full' : 'bg-plain rounded-md shadow-md p-6 max-w-full h-full flex flex-col'}>
             <Outlet />
           </div>
         </main>

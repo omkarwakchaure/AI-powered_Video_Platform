@@ -47,8 +47,6 @@ const SearchResults = () => {
     setLoading(false);
   }, [query, nextPageToken, loading]);
 
-  const isLive = query === 'live';
-
   // reset when query changes
   useEffect(() => {
     setResults([]);
