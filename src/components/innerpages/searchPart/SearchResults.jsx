@@ -3,6 +3,23 @@ import { useLocation } from 'react-router';
 import { YOUTUBE_SEARCH_API } from '../../../utils/constants';
 import SearchVideoCard from './SearchVideoCard';
 import ButtonList from '../../buttons/ButtonList';
+import ShimmerBlock from '../../commonFiles/ShimmerBlock';
+
+const SearchVideoCardShimmer = () => (
+  <div className="flex flex-col sm:flex-row gap-4 w-full">
+    <ShimmerBlock className="w-full sm:w-80 aspect-video rounded-xl flex-shrink-0" />
+    <div className="flex-1 space-y-2 py-1">
+      <ShimmerBlock className="h-5 w-3/4" />
+      <ShimmerBlock className="h-3 w-1/3" />
+      <div className="flex items-center gap-2 mt-2">
+        <ShimmerBlock className="h-6 w-6 rounded-full" />
+        <ShimmerBlock className="h-3 w-1/4" />
+      </div>
+      <ShimmerBlock className="h-3 w-full mt-2" />
+      <ShimmerBlock className="h-3 w-5/6" />
+    </div>
+  </div>
+);
 
 const SearchResults = () => {
   const [results, setResults] = useState([]);
@@ -88,7 +105,7 @@ const SearchResults = () => {
           <SearchVideoCard key={video.id} video={video} isLive={video.snippet.liveBroadcastContent === 'live'} />
         ))}
 
-        {loading && <p className="text-center py-4 text-text/60">Loading...</p>}
+        {loading && Array.from({ length: 5 }).map((_, idx) => <SearchVideoCardShimmer key={`shimmer-${idx}`} />)}
       </div>
     </div>
   );

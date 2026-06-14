@@ -29,6 +29,10 @@ const router = createBrowserRouter([
         element: <Shorts />,
       },
       {
+        path: 'ai-summary',
+        element: <AISummary />,
+      },
+      {
         path: 'ai-summary/:videoId',
         element: <AISummary />,
       },

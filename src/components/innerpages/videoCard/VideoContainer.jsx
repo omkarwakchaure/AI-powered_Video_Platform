@@ -4,6 +4,21 @@ import { Link } from 'react-router';
 
 import { YOUTUBE_VIDEOS_API } from '../../../utils/constants';
 import VideoCard from './VideoCard';
+import ShimmerBlock from '../../commonFiles/ShimmerBlock';
+
+const VideoCardShimmer = () => (
+  <div className="space-y-3">
+    <ShimmerBlock className="aspect-video w-full rounded-xl" />
+    <div className="flex gap-3">
+      <ShimmerBlock className="h-9 w-9 rounded-full flex-shrink-0" />
+      <div className="flex-1 space-y-2">
+        <ShimmerBlock className="h-4 w-full" />
+        <ShimmerBlock className="h-3 w-2/3" />
+        <ShimmerBlock className="h-3 w-1/2" />
+      </div>
+    </div>
+  </div>
+);
 
 const VideoContainer = ({ scrollRef }) => {
   const [videos, setVideos] = useState([]);
@@ -22,7 +37,6 @@ const VideoContainer = ({ scrollRef }) => {
     const data = await fetch(url);
     const res = await data.json();
 
-    // setVideos((prev) => [...prev, ...res.items]);
     setVideos((prev) => {
       const videoMap = new Map();
 
@@ -73,7 +87,7 @@ const VideoContainer = ({ scrollRef }) => {
         </Link>
       ))}
 
-      {loading && <p className="text-center w-full py-4 text-gray-500">Loading...</p>}
+      {loading && Array.from({ length: 8 }).map((_, idx) => <VideoCardShimmer key={`shimmer-${idx}`} />)}
     </div>
   );
 };

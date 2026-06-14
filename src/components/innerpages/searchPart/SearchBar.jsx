@@ -4,12 +4,14 @@ import { useNavigate } from 'react-router';
 import { YOUTUBE_SUGGESTION_API } from '../../../utils/constants';
 import { cacheResults } from '../../../store/slices/searchSlice';
 import { MagnifyingGlassIcon } from '@heroicons/react/24/outline';
+import ShimmerBlock from '../../commonFiles/ShimmerBlock';
 
 const SearchBar = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [isFocused, setIsFocused] = useState(false);
   const [suggestions, setSuggestions] = useState([]);
   const [suggestionsVisible, setSuggestionsVisible] = useState(false);
+  const [loadingSuggestions, setLoadingSuggestions] = useState(false);
 
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -21,9 +23,16 @@ const SearchBar = () => {
   useEffect(() => {
     const timer = setTimeout(() => {
       if (skipNextFetch.current) {
-        skipNextFetch.current = false; 
+        skipNextFetch.current = false;
         return;
       }
+
+      if (!searchQuery.trim()) {
+        setSuggestions([]);
+        setSuggestionsVisible(false);
+        return;
+      }
+
       const cached = searchCache[searchQuery];
       if (cached && Array.isArray(cached)) {
         setSuggestions(cached);
@@ -37,11 +46,21 @@ const SearchBar = () => {
 
   const getSearchSuggestions = async () => {
     if (!searchQuery) return;
-    const data = await fetch(`${YOUTUBE_SUGGESTION_API}?q=${searchQuery}`);
-    const json = await data.json();
-    const suggestionsArray = Array.isArray(json) ? json : [];
-    setSuggestions(suggestionsArray);
-    dispatch(cacheResults({ [searchQuery]: suggestionsArray }));
+
+    setLoadingSuggestions(true);
+    setSuggestionsVisible(true);
+
+    try {
+      const data = await fetch(`${YOUTUBE_SUGGESTION_API}?q=${searchQuery}`);
+      const json = await data.json();
+      const suggestionsArray = Array.isArray(json) ? json : [];
+      setSuggestions(suggestionsArray);
+      dispatch(cacheResults({ [searchQuery]: suggestionsArray }));
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setLoadingSuggestions(false);
+    }
   };
 
   const handleSearch = (e) => {
@@ -108,23 +127,34 @@ const SearchBar = () => {
       </button>
 
       {/* Suggestion Box */}
-      {suggestionsVisible && suggestions.length > 0 && (
+      {suggestionsVisible && (loadingSuggestions || suggestions.length > 0) && (
         <div className="suggest-box absolute top-full left-0 mt-1 bg-plain border border-border shadow-lg rounded-xl py-2 w-full z-50">
-          <ul>
-            {suggestions.map((suggestion) => (
-              <li
-                key={suggestion}
-                onClick={() => {
-                  setSearchQuery(suggestion);
-                  handleNavigate(suggestion);
-                }}
-                className="flex items-center gap-3 px-3 py-2 text-sm text-text cursor-pointer hover:bg-background rounded-xl transition-colors mx-2"
-              >
-                <MagnifyingGlassIcon className="h-4 text-text/50 shrink-0" />
-                <span>{suggestion}</span>
-              </li>
-            ))}
-          </ul>
+          {loadingSuggestions ? (
+            <ul className="space-y-1">
+              {Array.from({ length: 5 }).map((_, idx) => (
+                <li key={`shimmer-${idx}`} className="flex items-center gap-3 px-3 py-2 mx-2">
+                  <ShimmerBlock className="h-4 w-4 rounded-full flex-shrink-0" />
+                  <ShimmerBlock className="h-3 flex-1" style={{ width: `${60 + Math.random() * 30}%` }} />
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <ul>
+              {suggestions.map((suggestion) => (
+                <li
+                  key={suggestion}
+                  onClick={() => {
+                    setSearchQuery(suggestion);
+                    handleNavigate(suggestion);
+                  }}
+                  className="flex items-center gap-3 px-3 py-2 text-sm text-text cursor-pointer hover:bg-background rounded-xl transition-colors mx-2"
+                >
+                  <MagnifyingGlassIcon className="h-4 text-text/50 shrink-0" />
+                  <span>{suggestion}</span>
+                </li>
+              ))}
+            </ul>
+          )}
         </div>
       )}
     </div>

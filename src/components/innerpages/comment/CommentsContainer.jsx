@@ -2,11 +2,24 @@ import React, { useEffect, useState } from 'react';
 import { useSearchParams } from 'react-router';
 import CommentList from './CommentList';
 import { YOUTUBE_COMMENTS_API } from '../../../utils/constants';
+import ShimmerBlock from '../../commonFiles/ShimmerBlock';
+
+const CommentShimmer = () => (
+  <div className="flex gap-3 mb-4">
+    <ShimmerBlock className="h-10 w-10 rounded-full flex-shrink-0" />
+    <div className="flex-1 space-y-2">
+      <ShimmerBlock className="h-3 w-1/4" />
+      <ShimmerBlock className="h-3 w-full" />
+      <ShimmerBlock className="h-3 w-2/3" />
+    </div>
+  </div>
+);
 
 const CommentsContainer = ({ scrollRef }) => {
   const [commentsData, setCommentsData] = useState([]);
   const [nextPageToken, setNextPageToken] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [initialLoading, setInitialLoading] = useState(true);
 
   const [searchParams] = useSearchParams();
 
@@ -28,7 +41,6 @@ const CommentsContainer = ({ scrollRef }) => {
 
       const data = await res.json();
 
-      // Safety check
       if (!data?.items?.length) {
         console.error('No comments found');
         return;
@@ -53,8 +65,6 @@ const CommentsContainer = ({ scrollRef }) => {
           })) || [],
       }));
 
-      // console.log(formattedComments);
-
       setCommentsData((prev) => [...prev, ...formattedComments]);
 
       setNextPageToken(data.nextPageToken || null);
@@ -62,12 +72,14 @@ const CommentsContainer = ({ scrollRef }) => {
       console.error('Error fetching comments:', error);
     } finally {
       setLoading(false);
+      setInitialLoading(false);
     }
   };
 
   useEffect(() => {
     setCommentsData([]);
     setNextPageToken(null);
+    setInitialLoading(true);
 
     fetchComments();
   }, [videoId]);
@@ -106,13 +118,15 @@ const CommentsContainer = ({ scrollRef }) => {
     <div className="mt-6 max-w-7xl mx-auto px-2 sm:px-4 pb-10">
       <h1 className="text-lg sm:text-2xl font-semibold mb-4 text-text/90">Comments :</h1>
 
-      {commentsData.length === 0 && !loading ? (
+      {initialLoading ? (
+        Array.from({ length: 5 }).map((_, idx) => <CommentShimmer key={`shimmer-${idx}`} />)
+      ) : commentsData.length === 0 ? (
         <p className="text-sm text-text/60">No comments available</p>
       ) : (
         <>
           <CommentList comments={commentsData} />
 
-          {loading && <p className="text-center py-4 text-text/60">Loading comments...</p>}
+          {loading && Array.from({ length: 3 }).map((_, idx) => <CommentShimmer key={`shimmer-more-${idx}`} />)}
         </>
       )}
     </div>

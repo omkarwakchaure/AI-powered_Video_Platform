@@ -1,16 +1,13 @@
 import React, { useEffect, useState } from 'react';
-import { useParams } from 'react-router';
+import { useNavigate, useParams } from 'react-router';
 import { useDispatch, useSelector } from 'react-redux';
 import { BookOpenIcon, DocumentTextIcon, LightBulbIcon } from '@heroicons/react/24/outline';
 import { formatDuration } from '../../../utils/formatDuration';
 import labels from '../../config/lables';
 import { setSummary } from '../../../store/slices/aiSummarySlice';
-
-const ShimmerBlock = ({ className }) => (
-  <div className={`relative overflow-hidden bg-background rounded-md ${className}`}>
-    <div className="absolute inset-0 -translate-x-full animate-[shimmer_1.5s_infinite] bg-gradient-to-r from-transparent via-white/10 to-transparent" />
-  </div>
-);
+import AISummaryReport from '../../commonFiles/AISummaryReport';
+import { generateReport } from '../../../utils/report';
+import ShimmerBlock from '../../commonFiles/ShimmerBlock';
 
 const AISummary = () => {
   const { videoId } = useParams();
@@ -24,9 +21,14 @@ const AISummary = () => {
   const [language, setLanguage] = useState('english');
 
   const [errorMsg, setErrorMsg] = useState(null);
-  const [regenerating, setRegenerating] = useState(false);
+
+  const navigate = useNavigate();
 
   useEffect(() => {
+    if (!videoId) {
+      setLoading(false);
+      return;
+    }
     loadSummary();
   }, [videoId]);
 
@@ -47,7 +49,6 @@ const AISummary = () => {
       setErrorMsg(null);
 
       const response = await fetch(`/api/ai-summary/${videoId}${forceRefresh ? '?refresh=true' : ''}`);
-
       const result = await response.json();
 
       if (!response.ok) {
@@ -65,6 +66,41 @@ const AISummary = () => {
       setLoading(false);
     }
   };
+
+  const sanitizeFilename = (str) => {
+    return str
+      .replace(/[^\w\s-]/g, '') // remove special chars
+      .replace(/\s+/g, '-') // spaces to hyphens
+      .slice(0, 60); // limit length
+  };
+
+  const handleDownloadPdf = async () => {
+    try {
+      const safeTitle = sanitizeFilename(data.videoInfo?.title || videoId);
+
+      await generateReport({
+        document: <AISummaryReport data={data} language={language} />,
+        fileName: `${safeTitle}-${language}-summary.pdf`,
+      });
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  if (!videoId) {
+    return (
+      <div className="h-full flex items-center justify-center p-10">
+        <div className="text-center max-w-md">
+          <DocumentTextIcon className="h-16 w-16 text-text/30 mx-auto mb-4" />
+          <h2 className="text-xl font-bold text-text mb-2">No Video Selected</h2>
+          <p className="text-text/60 mb-6">Open a video first to generate an AI-powered summary, key points, and detailed guide.</p>
+          <button onClick={() => navigate('/')} className="px-5 py-2 rounded-lg bg-primary text-white cursor-pointer">
+            Browse Videos
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   if (errorMsg) {
     return (
@@ -109,46 +145,45 @@ const AISummary = () => {
         </div>
 
         {/* Video Info */}
-        {/* Video Info */}
         <div className="bg-background rounded-xl p-5">
-          <div className="flex items-start justify-between gap-4">
-            <div>
-              <h1 className="text-2xl font-bold mb-1 text-text">{data.videoInfo?.title}</h1>
-
-              <div className="flex items-center gap-3 text-sm text-text/70">
-                <span>{data.videoInfo?.channelName}</span>
-
-                {data.videoInfo?.duration && (
-                  <>
-                    <span>•</span>
-                    <span>{formatDuration(data.videoInfo.duration)}</span>
-                  </>
-                )}
-              </div>
-            </div>
-
-            <button onClick={() => fetchSummary(true)} className="px-4 py-2 text-sm rounded-lg bg-primary text-white hover:opacity-90 cursor-pointer">
-              {regenerating ? 'Regenerating...' : 'Regenerate'}
-            </button>
+          <h1 className="text-2xl font-bold mb-1 text-text">{data.videoInfo?.title}</h1>{' '}
+          <div className="flex items-center gap-3 text-sm text-text/70">
+            <span>{data.videoInfo?.channelName}</span>
+            {data.videoInfo?.duration && (
+              <>
+                <span>•</span> <span>{formatDuration(data.videoInfo.duration)}</span>{' '}
+              </>
+            )}
           </div>
         </div>
 
         {/* Language Selector */}
-        <div className="flex flex-wrap gap-3">
-          {['english', 'hindi', 'marathi'].map((lang) => (
-            <button
-              key={lang}
-              onClick={() => setLanguage(lang)}
-              className={` text-text
-                px-4 py-2 rounded-lg capitalize cursor-pointer transition
-                ${language === lang ? 'bg-primary text-white' : 'bg-background hover:bg-background/80'}
-              `}
-            >
-              {lang}
-            </button>
-          ))}
-        </div>
+        <div className="flex flex-wrap items-center justify-between gap-4">
+          {/* Left Side - Languages */}
+          <div className="flex flex-wrap gap-3">
+            {['english', 'hindi', 'marathi'].map((lang) => (
+              <button
+                key={lang}
+                onClick={() => setLanguage(lang)}
+                className={`px-4 py-2 rounded-lg capitalize cursor-pointer transition
+          ${language === lang ? 'bg-primary text-white' : 'bg-background text-text hover:bg-background/80'}`}
+              >
+                {lang}
+              </button>
+            ))}
+          </div>
 
+          {/* Right Side - Actions */}
+          <div className="flex items-center gap-3">
+            <button onClick={handleDownloadPdf} className="px-4 py-2 rounded-lg bg-highlight/90 text-white cursor-pointer">
+              Download PDF
+            </button>
+
+            <button onClick={() => fetchSummary(true)} className="px-4 py-2 rounded-lg bg-accent/90 text-white cursor-pointer">
+              Regenerate
+            </button>
+          </div>
+        </div>
         {/* AI Summary */}
         <div className="bg-background rounded-xl p-5 w-full">
           <div className="flex items-center gap-2 mb-4">
@@ -157,7 +192,6 @@ const AISummary = () => {
           </div>
           <p className="leading-7 text-text/80 whitespace-pre-line break-words">{data.summary?.[language]}</p>
         </div>
-
         {/* Key Points */}
         <div className="bg-background rounded-xl p-5">
           <div className="flex items-center gap-2 mb-4">
@@ -174,7 +208,6 @@ const AISummary = () => {
             ))}
           </ul>
         </div>
-
         {/* Detailed Guide */}
         <div className="bg-background rounded-xl p-5">
           <div className="flex items-center gap-2 mb-4">
@@ -197,7 +230,6 @@ const AISummary = () => {
             </div>
           ))}
         </div>
-
         {/* Important Takeaways */}
         <div className="bg-background rounded-xl p-5">
           <div className="flex items-center gap-2 mb-4">

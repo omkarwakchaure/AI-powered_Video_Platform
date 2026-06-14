@@ -1,4 +1,4 @@
-import { HomeIcon, BoltIcon } from '@heroicons/react/24/outline';
+import { HomeIcon, BoltIcon, SparklesIcon } from '@heroicons/react/24/outline';
 
 export const SIDEBAR_CONFIG = [
   {
@@ -16,9 +16,9 @@ export const SIDEBAR_CONFIG = [
   {
     id: 'AISummary',
     label: 'AI Summary',
-    icon: BoltIcon,
+    icon: SparklesIcon,
     path: '/ai-summary',
-  }
+  },
   // {
   //   id: 'library',
   //   label: 'Library',

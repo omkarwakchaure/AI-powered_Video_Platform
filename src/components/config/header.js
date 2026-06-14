@@ -4,8 +4,8 @@ export const headerConfig = {
     showMenuButton: true,
   },
   notifications: {
-    enabled: true,
-    showIndicator: true,
+    enabled: false,
+    showIndicator: false,
   },
   userMenu: {
     showProfile: true,
