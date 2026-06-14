@@ -28,3 +28,9 @@ body {
   --color-alert: oklch(56.6% 0.245 29.23);
   --color-black: oklch(0% 0 0);
 }
+
+@keyframes shimmer {
+  100% {
+    transform: translateX(100%);
+  }
+}

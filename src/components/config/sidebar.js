@@ -13,6 +13,12 @@ export const SIDEBAR_CONFIG = [
     icon: BoltIcon,
     path: '/shorts',
   },
+  {
+    id: 'AISummary',
+    label: 'AI Summary',
+    icon: BoltIcon,
+    path: '/ai-summary',
+  }
   // {
   //   id: 'library',
   //   label: 'Library',

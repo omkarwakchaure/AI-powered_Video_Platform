@@ -8,8 +8,10 @@ import searchHandler from './api/search.js';
 import suggestHandler from './api/suggest.js';
 import commentsHandler from './api/comments.js';
 import shortsHandler from './api/shorts.js';
+import aiSummaryHandler from './api/aiSummary.js';
 
 const app = express();
+app.use(express.json());
 
 // Optional: serve Vite build (dist)
 const __filename = fileURLToPath(import.meta.url);
@@ -22,6 +24,7 @@ app.get('/api/search', (req, res) => searchHandler(req, res));
 app.get('/api/suggest', (req, res) => suggestHandler(req, res));
 app.get('/api/comments', (req, res) => commentsHandler(req, res));
 app.get('/api/shorts', (req, res) => shortsHandler(req, res));
+app.get('/api/ai-summary/:videoId', (req, res) => aiSummaryHandler(req, res));
 
 // Run server
 const PORT = 5001;

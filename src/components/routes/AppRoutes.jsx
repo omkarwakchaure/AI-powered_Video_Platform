@@ -5,6 +5,7 @@ import WatchPage from '../innerpages/watchPage/WatchPage';
 import SearchResults from '../innerpages/searchPart/SearchResults';
 import React from 'react';
 import Shorts from '../innerpages/shorts/shorts';
+import AISummary from '../innerpages/aiSummary/AISummary';
 
 const router = createBrowserRouter([
   {
@@ -26,6 +27,10 @@ const router = createBrowserRouter([
       {
         path: 'shorts',
         element: <Shorts />,
+      },
+      {
+        path: 'ai-summary/:videoId',
+        element: <AISummary />,
       },
     ],
   },
