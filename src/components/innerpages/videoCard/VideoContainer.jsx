@@ -22,33 +22,35 @@ const VideoCardShimmer = () => (
 
 const VideoContainer = ({ scrollRef }) => {
   const [videos, setVideos] = useState([]);
-  const [nextPageToken, setNextPageToken] = useState(null);
   const [loading, setLoading] = useState(false);
+
+  const nextPageTokenRef = useRef(null);
+  const loadingRef = useRef(false);
   const containerRef = useRef(null);
 
   const getVideos = useCallback(async () => {
-    if (loading) return;
+    if (loadingRef.current) return;
+
+    loadingRef.current = true;
     setLoading(true);
 
+    const token = nextPageTokenRef.current;
     const separator = YOUTUBE_VIDEOS_API.includes('?') ? '&' : '?';
-
-    const url = nextPageToken != null ? `${YOUTUBE_VIDEOS_API}${separator}pageToken=${nextPageToken}` : YOUTUBE_VIDEOS_API;
+    const url = token ? `${YOUTUBE_VIDEOS_API}${separator}pageToken=${token}` : YOUTUBE_VIDEOS_API;
 
     const data = await fetch(url);
     const res = await data.json();
 
     setVideos((prev) => {
       const videoMap = new Map();
-
-      [...prev, ...res.items].forEach((video) => {
-        videoMap.set(video.id, video);
-      });
-
+      [...prev, ...res.items].forEach((video) => videoMap.set(video.id, video));
       return Array.from(videoMap.values());
     });
-    setNextPageToken(res.nextPageToken || null);
+
+    nextPageTokenRef.current = res.nextPageToken || null;
+    loadingRef.current = false;
     setLoading(false);
-  }, [nextPageToken, loading]);
+  }, []);
 
   useEffect(() => {
     getVideos();
@@ -63,12 +65,12 @@ const VideoContainer = ({ scrollRef }) => {
       const { scrollTop, scrollHeight, clientHeight } = scrollContainer;
       const nearBottom = scrollTop + clientHeight >= scrollHeight - 300;
 
-      if (nearBottom && !loading) getVideos();
+      if (nearBottom) getVideos();
     };
 
     scrollContainer.addEventListener('scroll', handleScroll);
     return () => scrollContainer.removeEventListener('scroll', handleScroll);
-  }, [getVideos, loading, scrollRef]);
+  }, [getVideos, scrollRef]);
 
   return (
     <div
