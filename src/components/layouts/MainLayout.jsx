@@ -34,7 +34,6 @@ const MainLayout = () => {
         onNavigate={(path) => navigate(path)}
         onToggleSidebar={() => dispatch(toggleSidebar())}
         onCloseMobileMenu={() => dispatch(closeMobileMenu())}
-        onLogout={() => {}}
       />
 
       {/* Main Content */}

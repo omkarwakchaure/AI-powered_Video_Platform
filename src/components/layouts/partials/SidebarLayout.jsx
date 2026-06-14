@@ -54,7 +54,7 @@ const SidebarLayout = ({ logo, menuConfig, pathname, isSidebarCollapsed, isMobil
             {menuConfig.map((item) => {
               const Icon = item.icon;
               const isOpen = expanded[item.id];
-              const isActiveItem = item.path && pathname === item.path;
+              const isActiveItem = item.path === '/' ? pathname === '/' : pathname.startsWith(item.path);
               const isSelectionActive = item.children?.some((child) => pathname.startsWith(child.path));
 
               if (!item.children) {
@@ -71,7 +71,7 @@ const SidebarLayout = ({ logo, menuConfig, pathname, isSidebarCollapsed, isMobil
                     }}
                     className={`w-full flex items-center p-3 rounded-lg transition-colors group cursor-pointer ${
                       isSidebarCollapsed ? 'justify-center' : 'space-x-3'
-                    } ${isActiveItem ? 'text-primary font-medium' : 'hover:bg-background text-text/90 font-medium'}`}
+                    } ${isActiveItem ? 'text-primary font-medium hover:bg-background' : 'hover:bg-background text-text/90 font-medium'}`}
                   >
                     {Icon && <Icon className="w-5 h-5 flex-shrink-0" />}
                     {(!isSidebarCollapsed || isMobileMenuOpen) && <span>{item.label}</span>}
