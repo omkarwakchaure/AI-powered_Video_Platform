@@ -4,7 +4,7 @@ import MainContainer from '../MainContainer';
 import WatchPage from '../innerpages/watchPage/WatchPage';
 import SearchResults from '../innerpages/searchPart/SearchResults';
 import React from 'react';
-import Shorts from '../innerpages/shorts/shorts';
+import Shorts from '../innerpages/shorts/Shorts';
 import AISummary from '../innerpages/aiSummary/AISummary';
 
 const router = createBrowserRouter([
