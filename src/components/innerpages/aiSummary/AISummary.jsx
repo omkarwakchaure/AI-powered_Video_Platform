@@ -8,6 +8,7 @@ import { setSummary } from '../../../store/slices/aiSummarySlice';
 import AISummaryReport from '../../commonFiles/AISummaryReport';
 import { generateReport } from '../../../utils/report';
 import ShimmerBlock from '../../commonFiles/ShimmerBlock';
+import { loadingMessages } from '../../config/messages';
 
 const AISummary = () => {
   const { videoId } = useParams();
@@ -23,6 +24,18 @@ const AISummary = () => {
   const [errorMsg, setErrorMsg] = useState(null);
 
   const navigate = useNavigate();
+
+  const [messageIndex, setMessageIndex] = useState(0);
+
+  useEffect(() => {
+    if (!loading) return;
+
+    const interval = setInterval(() => {
+      setMessageIndex((prev) => (prev + 1) % loadingMessages.length);
+    }, 2000);
+
+    return () => clearInterval(interval);
+  }, [loading]);
 
   useEffect(() => {
     if (!videoId) {
@@ -117,16 +130,39 @@ const AISummary = () => {
     return (
       <div className="h-full overflow-y-auto">
         <div className="max-w-5xl mx-auto p-4 space-y-6">
-          <ShimmerBlock className="aspect-video w-full" />
-          <ShimmerBlock className="h-20 w-full" />
-          <div className="flex gap-3">
-            <ShimmerBlock className="h-10 w-24" />
-            <ShimmerBlock className="h-10 w-24" />
-            <ShimmerBlock className="h-10 w-24" />
+          {/* Thinking Message */}
+          <div className="text-center py-6">
+            <h2 className="text-2xl font-bold text-primary animate-pulse">{loadingMessages[messageIndex]}</h2>
+
+            <p className="mt-3 text-text/70">Listening to the video, understanding the context, and generating your summary.</p>
+
+            <p className="text-sm text-text/50 mt-2">This usually takes 10–20 seconds.</p>
           </div>
-          <ShimmerBlock className="h-40 w-full" />
-          <ShimmerBlock className="h-40 w-full" />
-          <ShimmerBlock className="h-40 w-full" />
+
+          {/* Video */}
+          <ShimmerBlock className="aspect-video w-full rounded-xl" />
+
+          {/* Video Info */}
+          <ShimmerBlock className="h-20 w-full rounded-xl" />
+
+          {/* Language Buttons */}
+          <div className="flex gap-3">
+            <ShimmerBlock className="h-10 w-24 rounded-lg" />
+            <ShimmerBlock className="h-10 w-24 rounded-lg" />
+            <ShimmerBlock className="h-10 w-24 rounded-lg" />
+          </div>
+
+          {/* Summary */}
+          <ShimmerBlock className="h-44 w-full rounded-xl" />
+
+          {/* Key Points */}
+          <ShimmerBlock className="h-52 w-full rounded-xl" />
+
+          {/* Detailed Guide */}
+          <ShimmerBlock className="h-72 w-full rounded-xl" />
+
+          {/* Takeaways */}
+          <ShimmerBlock className="h-44 w-full rounded-xl" />
         </div>
       </div>
     );
